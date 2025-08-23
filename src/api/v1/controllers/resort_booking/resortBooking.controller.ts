@@ -27,6 +27,31 @@ export const bookResort = async (req: Request, res: Response) => {
 	}
 };
 
+export const updateResortBooking = async (req: Request, res: Response) => {
+	try {
+		const { id } = req.params;
+		const payload = req.body;
+
+		const updatedBooking = await ResortBookingModel.findByIdAndUpdate(id, payload, { new: true });
+
+		if (!updatedBooking) {
+			return res.status(404).json({
+				message: MESSAGE.patch.fail
+			});
+		}
+
+		return res.status(200).json({
+			message: MESSAGE.patch.succ,
+			result: updatedBooking
+		});
+	} catch (error) {
+		console.error("Error updating booking:", error);
+		return res.status(400).json({
+			message: MESSAGE.patch.fail
+		});
+	}
+};
+
 const calculateBookingDays = (checkInDate: Date, checkOutDate: Date): number => {
 	const oneDay = 24 * 60 * 60 * 1000; // Hours * minutes * seconds * milliseconds
 	const diffDays = Math.round(
