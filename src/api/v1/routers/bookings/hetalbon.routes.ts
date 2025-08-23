@@ -16,6 +16,6 @@ router.route("/resort-bookings-stats").get(getResortBookingStats);
 
 router.route("/resort-bookings-dates").get(getResortBookingAvailability);
 
-router.route("/confirm-booking").patch(updateResortBooking);
+router.route("/confirm-booking/:id").patch(updateResortBooking);
 
 module.exports = router;
