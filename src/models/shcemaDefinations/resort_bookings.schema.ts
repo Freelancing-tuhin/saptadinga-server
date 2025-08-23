@@ -15,6 +15,7 @@ const resortBookingsSchema: Schema<IBookingsSchema> = new Schema<IBookingsSchema
 		bookingDaysCount: SCHEMA_DEFINITION_PROPERTY.optionalNullNumber,
 		status: SCHEMA_DEFINITION_PROPERTY.optionalNullString,
 		roomCount: SCHEMA_DEFINITION_PROPERTY.optionalNullNumber,
+		comment: SCHEMA_DEFINITION_PROPERTY.optionalNullString,
 
 		// roomType: {
 		// 	type: String,

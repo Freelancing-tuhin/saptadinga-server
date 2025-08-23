@@ -10,9 +10,10 @@ export interface IBookingsSchema {
 	bookingDaysCount: number;
 	status: string;
 	guestCount: number;
-	roomType:string;
-	roomCount:number;
-	activities:any[]
+	roomType: string;
+	roomCount: number;
+	activities: any[];
+	comment: string;
 }
 
 export interface IBookings extends IBookingsSchema, IObjectId {}
