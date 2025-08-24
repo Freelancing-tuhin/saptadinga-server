@@ -17,6 +17,7 @@ const resortBookingsSchema = new mongoose_1.Schema({
     bookingDaysCount: model_constant_1.default.optionalNullNumber,
     status: model_constant_1.default.optionalNullString,
     roomCount: model_constant_1.default.optionalNullNumber,
+    comment: model_constant_1.default.optionalNullString,
     // roomType: {
     // 	type: String,
     // 	enum: ["Delux", "Normal", "Executive"],

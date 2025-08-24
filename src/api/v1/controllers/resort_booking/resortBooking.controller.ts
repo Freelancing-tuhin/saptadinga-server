@@ -1,3 +1,5 @@
+// Resort booking stats for dashboard/graph
+
 import { Request, Response } from "express";
 import resortBookingsSchema from "../../../../models/shcemaDefinations/resort_bookings.schema";
 import { MESSAGE } from "../../../../constants/message";
@@ -27,6 +29,73 @@ export const bookResort = async (req: Request, res: Response) => {
 	}
 };
 
+// ...existing code...
+
+export const getResortBookingDashboardStats = async (req: Request, res: Response) => {
+	try {
+		const bookings = await ResortBookingModel.find();
+
+		// Total bookings
+		const totalBookings = bookings.length;
+
+		// Unique customers by phone number
+		const uniquePhones = new Set(bookings.map((b) => b.user_phone));
+		const totalUniqueCustomers = uniquePhones.size;
+
+		// Total income
+		const totalIncome = bookings.reduce((sum, b) => sum + (b.totalPrice || 0), 0);
+
+		// Prepare series data for graph (group by month, always 12 months)
+		const now = new Date();
+		const year = now.getFullYear();
+		const months = Array.from({ length: 12 }, (_, i) =>
+			new Date(year, i, 1).toLocaleString("en-US", { month: "short", year: "numeric" })
+		);
+
+		// Initialize stats
+		const monthlyStats: Record<string, { bookings: number; guests: number; income: number }> = {};
+		months.forEach((m) => (monthlyStats[m] = { bookings: 0, guests: 0, income: 0 }));
+
+		bookings.forEach((b) => {
+			const d = new Date(b.checkInDate);
+			if (d.getFullYear() === year) {
+				const month = d.toLocaleString("en-US", { month: "short", year: "numeric" });
+				monthlyStats[month].bookings += 1;
+				monthlyStats[month].guests += b.guestCount || 0;
+				monthlyStats[month].income += b.totalPrice || 0;
+			}
+		});
+
+		const series = [
+			{
+				name: "Bookings",
+				data: months.map((m) => monthlyStats[m].bookings)
+			},
+			{
+				name: "Guests",
+				data: months.map((m) => monthlyStats[m].guests)
+			},
+			{
+				name: "Income",
+				data: months.map((m) => monthlyStats[m].income / 10000) // in tens of thousands
+			}
+		];
+
+		return res.status(200).json({
+			message: MESSAGE.get.succ,
+			totalBookings,
+			totalUniqueCustomers,
+			totalIncome,
+			months,
+			series
+		});
+	} catch (error) {
+		console.error("Error getting dashboard stats:", error);
+		return res.status(400).json({
+			message: MESSAGE.get.fail
+		});
+	}
+};
 export const updateResortBooking = async (req: Request, res: Response) => {
 	try {
 		const { id } = req.params;

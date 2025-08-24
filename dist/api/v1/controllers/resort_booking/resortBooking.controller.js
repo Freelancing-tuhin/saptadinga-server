@@ -1,4 +1,5 @@
 "use strict";
+// Resort booking stats for dashboard/graph
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -12,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getResortBookingAvailability = exports.getResortBookings = exports.bookResort = void 0;
+exports.getResortBookingAvailability = exports.getResortBookings = exports.updateResortBooking = exports.getResortBookingDashboardStats = exports.bookResort = void 0;
 const message_1 = require("../../../../constants/message");
 const resortBookings_model_1 = __importDefault(require("../../../../models/resortBookings.model"));
 const bookResort = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -36,6 +37,87 @@ const bookResort = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.bookResort = bookResort;
+// ...existing code...
+const getResortBookingDashboardStats = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const bookings = yield resortBookings_model_1.default.find();
+        // Total bookings
+        const totalBookings = bookings.length;
+        // Unique customers by phone number
+        const uniquePhones = new Set(bookings.map((b) => b.user_phone));
+        const totalUniqueCustomers = uniquePhones.size;
+        // Total income
+        const totalIncome = bookings.reduce((sum, b) => sum + (b.totalPrice || 0), 0);
+        // Prepare series data for graph (group by month, always 12 months)
+        const now = new Date();
+        const year = now.getFullYear();
+        const months = Array.from({ length: 12 }, (_, i) => new Date(year, i, 1).toLocaleString("en-US", { month: "short", year: "numeric" }));
+        // Initialize stats
+        const monthlyStats = {};
+        months.forEach((m) => (monthlyStats[m] = { bookings: 0, guests: 0, income: 0 }));
+        bookings.forEach((b) => {
+            const d = new Date(b.checkInDate);
+            if (d.getFullYear() === year) {
+                const month = d.toLocaleString("en-US", { month: "short", year: "numeric" });
+                monthlyStats[month].bookings += 1;
+                monthlyStats[month].guests += b.guestCount || 0;
+                monthlyStats[month].income += b.totalPrice || 0;
+            }
+        });
+        const series = [
+            {
+                name: "Bookings",
+                data: months.map((m) => monthlyStats[m].bookings)
+            },
+            {
+                name: "Guests",
+                data: months.map((m) => monthlyStats[m].guests)
+            },
+            {
+                name: "Income",
+                data: months.map((m) => monthlyStats[m].income / 10000) // in tens of thousands
+            }
+        ];
+        return res.status(200).json({
+            message: message_1.MESSAGE.get.succ,
+            totalBookings,
+            totalUniqueCustomers,
+            totalIncome,
+            months,
+            series
+        });
+    }
+    catch (error) {
+        console.error("Error getting dashboard stats:", error);
+        return res.status(400).json({
+            message: message_1.MESSAGE.get.fail
+        });
+    }
+});
+exports.getResortBookingDashboardStats = getResortBookingDashboardStats;
+const updateResortBooking = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const payload = req.body;
+        const updatedBooking = yield resortBookings_model_1.default.findByIdAndUpdate(id, payload, { new: true });
+        if (!updatedBooking) {
+            return res.status(404).json({
+                message: message_1.MESSAGE.patch.fail
+            });
+        }
+        return res.status(200).json({
+            message: message_1.MESSAGE.patch.succ,
+            result: updatedBooking
+        });
+    }
+    catch (error) {
+        console.error("Error updating booking:", error);
+        return res.status(400).json({
+            message: message_1.MESSAGE.patch.fail
+        });
+    }
+});
+exports.updateResortBooking = updateResortBooking;
 const calculateBookingDays = (checkInDate, checkOutDate) => {
     const oneDay = 24 * 60 * 60 * 1000; // Hours * minutes * seconds * milliseconds
     const diffDays = Math.round(Math.abs((new Date(checkOutDate).getTime() - new Date(checkInDate).getTime()) / oneDay));

@@ -2,6 +2,7 @@ import express from "express";
 import {
 	bookResort,
 	getResortBookingAvailability,
+	getResortBookingDashboardStats,
 	getResortBookings,
 	updateResortBooking
 } from "../../controllers/resort_booking/resortBooking.controller";
@@ -10,6 +11,7 @@ import { getResortBookingStats } from "../../controllers/dashboard/bookingStats/
 const router = express.Router();
 
 router.route("/book_resort").post(bookResort);
+router.route("/get-resort-booking-stats").get(getResortBookingDashboardStats);
 router.route("/check-resort-dates").get(checkFullyBookedDatesHetalbon);
 router.route("/getAll-resort-bookings").get(getResortBookings);
 router.route("/resort-bookings-stats").get(getResortBookingStats);
