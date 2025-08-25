@@ -21,7 +21,7 @@ export const submitContactForm = async (req: Request, res: Response) => {
 
 export const getContactForms = async (req: Request, res: Response) => {
 	try {
-		const contacts = await ContactFormModel.find();
+		const contacts = await ContactFormModel.find().sort({ createdAt: -1 });
 		return res.status(200).json({
 			message: MESSAGE.get.succ,
 			result: contacts

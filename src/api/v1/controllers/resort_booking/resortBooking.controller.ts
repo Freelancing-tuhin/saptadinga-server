@@ -131,7 +131,7 @@ const calculateBookingDays = (checkInDate: Date, checkOutDate: Date): number => 
 
 export const getResortBookings = async (req: Request, res: Response) => {
 	try {
-		const bookings = await ResortBookingModel.find();
+		const bookings = await ResortBookingModel.find().sort({ createdAt: -1 });
 
 		return res.status(200).json({
 			message: MESSAGE.get.succ,
