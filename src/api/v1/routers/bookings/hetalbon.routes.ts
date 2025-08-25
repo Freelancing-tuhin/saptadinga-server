@@ -1,6 +1,7 @@
 import express from "express";
 import {
 	bookResort,
+	deleteResortBooking,
 	getResortBookingAvailability,
 	getResortBookingDashboardStats,
 	getResortBookings,
@@ -19,5 +20,7 @@ router.route("/resort-bookings-stats").get(getResortBookingStats);
 router.route("/resort-bookings-dates").get(getResortBookingAvailability);
 
 router.route("/confirm-booking/:id").patch(updateResortBooking);
+
+router.route("/delete-booking/:id").delete(deleteResortBooking);
 
 module.exports = router;

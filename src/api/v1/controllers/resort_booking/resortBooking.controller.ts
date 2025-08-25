@@ -208,3 +208,24 @@ export const getResortBookingAvailability = async (req: Request, res: Response) 
 		});
 	}
 };
+
+export const deleteResortBooking = async (req: Request, res: Response) => {
+	try {
+		const { id } = req.params;
+		const deletedBooking = await ResortBookingModel.findByIdAndDelete(id);
+		if (!deletedBooking) {
+			return res.status(404).json({
+				message: MESSAGE.delete.fail
+			});
+		}
+		return res.status(200).json({
+			message: MESSAGE.delete.succ,
+			result: deletedBooking
+		});
+	} catch (error) {
+		console.error("Error deleting booking:", error);
+		return res.status(400).json({
+			message: MESSAGE.delete.fail
+		});
+	}
+};
