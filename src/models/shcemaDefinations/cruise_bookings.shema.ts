@@ -1,25 +1,20 @@
 import { Schema } from "mongoose";
 import SCHEMA_DEFINITION_PROPERTY from "../../constants/model/model.constant";
 import { GENERAL_SCHEMA_OPTIONS } from "../../constants/model/schemaOption";
-import { ICruiseBookingsSchema } from "../../ts/interfaces/cruiseBooking.interface";
+import { IBookingsSchema } from "../../ts/interfaces/bookings.interface";
 
-const cruiseBookingsSchema: Schema<ICruiseBookingsSchema> = new Schema<ICruiseBookingsSchema>(
+const cruiseBookingsSchema: Schema<IBookingsSchema> = new Schema<IBookingsSchema>(
 	{
-		user_name: SCHEMA_DEFINITION_PROPERTY.requiredString,
-		user_phone: SCHEMA_DEFINITION_PROPERTY.requiredString,
-		user_mail: SCHEMA_DEFINITION_PROPERTY.requiredString,
-		roomCount:SCHEMA_DEFINITION_PROPERTY.requiredNumber,
+		user_name: SCHEMA_DEFINITION_PROPERTY.optionalNullString,
+		user_phone: SCHEMA_DEFINITION_PROPERTY.optionalNullString,
 		checkInDate: SCHEMA_DEFINITION_PROPERTY.optionalNullObject,
 		checkOutDate: SCHEMA_DEFINITION_PROPERTY.optionalNullObject,
-		totalPrice: SCHEMA_DEFINITION_PROPERTY.requiredNumber,
-		guestCount: SCHEMA_DEFINITION_PROPERTY.requiredNumber,
-		bookingDaysCount: SCHEMA_DEFINITION_PROPERTY.requiredNumber,
-		status: SCHEMA_DEFINITION_PROPERTY.requiredString,
-		roomType: {
-			type: String,
-			enum: ["Delux", "Normal", "Executive"], 
-			required: true,
-		},
+		totalPrice: SCHEMA_DEFINITION_PROPERTY.optionalNullNumber,
+		guestCount: SCHEMA_DEFINITION_PROPERTY.optionalNullNumber,
+		bookingDaysCount: SCHEMA_DEFINITION_PROPERTY.optionalNullNumber,
+		status: SCHEMA_DEFINITION_PROPERTY.optionalNullString,
+		roomCount: SCHEMA_DEFINITION_PROPERTY.optionalNullNumber,
+		comment: SCHEMA_DEFINITION_PROPERTY.optionalNullString
 	},
 	GENERAL_SCHEMA_OPTIONS
 );
