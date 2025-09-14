@@ -93,6 +93,7 @@ export const getCruiseBookingDashboardStats = async (req: Request, res: Response
 	}
 };
 export const updateCruiseBooking = async (req: Request, res: Response) => {
+	console.log("======> Update Cruise Booking Called <=======");
 	try {
 		const { id } = req.params;
 		const payload = req.body;
@@ -185,7 +186,7 @@ export const getCruiseBookingAvailability = async (req: Request, res: Response) 
 		const availability = Array.from(dateRoomMap.entries()).map(([date, roomCount]) => {
 			return {
 				date,
-				room: roomCount >= 10 ? "full" : roomCount
+				room: roomCount >= 7 ? "full" : roomCount
 			};
 		});
 
