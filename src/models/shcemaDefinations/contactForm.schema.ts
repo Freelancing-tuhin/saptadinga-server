@@ -7,7 +7,8 @@ const contactFormSchema = new Schema<IContactForm>(
 		name: SCHEMA_DEFINITION_PROPERTY.optionalNullString,
 		email: SCHEMA_DEFINITION_PROPERTY.optionalNullString,
 		phone: SCHEMA_DEFINITION_PROPERTY.requiredString,
-		comment: SCHEMA_DEFINITION_PROPERTY.optionalNullString
+		comment: SCHEMA_DEFINITION_PROPERTY.optionalNullString,
+		tag: SCHEMA_DEFINITION_PROPERTY.optionalNullString
 	},
 	{ timestamps: true }
 );

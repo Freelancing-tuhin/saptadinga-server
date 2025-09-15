@@ -4,8 +4,8 @@ import { MESSAGE } from "../../../constants/message";
 
 export const submitContactForm = async (req: Request, res: Response) => {
 	try {
-		const { name, email, phone, comment } = req.body;
-		const contact = new ContactFormModel({ name, email, phone, comment });
+		const { name, email, phone, comment, tag } = req.body;
+		const contact = new ContactFormModel({ name, email, phone, comment, tag });
 		await contact.save();
 		return res.status(200).json({
 			message: MESSAGE.post.succ,

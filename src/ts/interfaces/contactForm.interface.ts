@@ -3,4 +3,5 @@ export interface IContactForm {
 	email: string;
 	phone: string;
 	comment: string;
+	tag: string;
 }
