@@ -32,7 +32,7 @@ export const getCruiseBookingDashboardStats = async (req: Request, res: Response
 		const bookings = await CruiseBookingModel.find();
 
 		// Only consider bookings with status === 'CONFIRMED' as real bookings
-		const confirmedBookings = bookings.filter((b) => ((b.status || '').toString().toUpperCase() === 'CONFIRMED'));
+		const confirmedBookings = bookings.filter((b) => (b.status || "").toString().toUpperCase() === "CONFIRMED");
 
 		// Total bookings (only confirmed)
 		const totalBookings = confirmedBookings.length;
@@ -153,7 +153,7 @@ export const getCruiseBookingAvailability = async (req: Request, res: Response) 
 		const bookings = await CruiseBookingModel.find();
 
 		// Only consider confirmed bookings for availability
-		const confirmedBookings = bookings.filter((b) => ((b.status || '').toString().toUpperCase() === 'CONFIRMED'));
+		const confirmedBookings = bookings.filter((b) => (b.status || "").toString().toUpperCase() === "CONFIRMED");
 
 		console.log("Total bookings found:", bookings.length);
 		console.log("Confirmed bookings considered for availability:", confirmedBookings.length);
