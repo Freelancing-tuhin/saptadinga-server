@@ -31,15 +31,18 @@ export const getCruiseBookingDashboardStats = async (req: Request, res: Response
 	try {
 		const bookings = await CruiseBookingModel.find();
 
-		// Total bookings
-		const totalBookings = bookings.length;
+		// Only consider bookings with status === 'CONFIRMED' as real bookings
+		const confirmedBookings = bookings.filter((b) => ((b.status || '').toString().toUpperCase() === 'CONFIRMED'));
 
-		// Unique customers by phone number
-		const uniquePhones = new Set(bookings.map((b) => b.user_phone));
+		// Total bookings (only confirmed)
+		const totalBookings = confirmedBookings.length;
+
+		// Unique customers by phone number (only confirmed)
+		const uniquePhones = new Set(confirmedBookings.map((b) => b.user_phone));
 		const totalUniqueCustomers = uniquePhones.size;
 
-		// Total income
-		const totalIncome = bookings.reduce((sum, b) => sum + (b.totalPrice || 0), 0);
+		// Total income (only confirmed)
+		const totalIncome = confirmedBookings.reduce((sum, b) => sum + (b.totalPrice || 0), 0);
 
 		// Prepare series data for graph (group by month, always 12 months)
 		const now = new Date();
@@ -52,7 +55,8 @@ export const getCruiseBookingDashboardStats = async (req: Request, res: Response
 		const monthlyStats: Record<string, { bookings: number; guests: number; income: number }> = {};
 		months.forEach((m) => (monthlyStats[m] = { bookings: 0, guests: 0, income: 0 }));
 
-		bookings.forEach((b) => {
+		// Count only confirmed bookings into monthly stats
+		confirmedBookings.forEach((b) => {
 			const d = new Date(b.checkInDate);
 			if (d.getFullYear() === year) {
 				const month = d.toLocaleString("en-US", { month: "short", year: "numeric" });
@@ -148,13 +152,17 @@ export const getCruiseBookingAvailability = async (req: Request, res: Response) 
 		// Get all bookings
 		const bookings = await CruiseBookingModel.find();
 
+		// Only consider confirmed bookings for availability
+		const confirmedBookings = bookings.filter((b) => ((b.status || '').toString().toUpperCase() === 'CONFIRMED'));
+
 		console.log("Total bookings found:", bookings.length);
+		console.log("Confirmed bookings considered for availability:", confirmedBookings.length);
 
 		// Create a map to store room counts by date
 		const dateRoomMap = new Map<string, number>();
 
-		// Process each booking to count rooms for each date
-		bookings.forEach((booking, index) => {
+		// Process each confirmed booking to count rooms for each date
+		confirmedBookings.forEach((booking, index) => {
 			console.log(`Processing booking ${index + 1}:`, {
 				checkInDate: booking.checkInDate,
 				checkOutDate: booking.checkOutDate,
