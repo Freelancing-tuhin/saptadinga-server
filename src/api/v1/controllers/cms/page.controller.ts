@@ -5,7 +5,12 @@ import { MESSAGE } from "../../../../constants/message";
 export const getPagesByWebsite = async (req: Request, res: Response) => {
 	try {
 		const { websiteId } = req.params;
-		const pages = await PageModel.find({ websiteId }).sort({ createdAt: -1 });
+		const { slug } = req.query;
+		const query: any = { websiteId };
+		if (slug) {
+			query.slug = slug;
+		}
+		const pages = await PageModel.find(query).sort({ createdAt: -1 });
 		return res.status(200).json({
 			message: MESSAGE.get.succ,
 			result: pages
