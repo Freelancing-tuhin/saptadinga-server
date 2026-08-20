@@ -15,51 +15,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.auth = exports.convertCaseInsensitiveForQuery = exports.generateJWT = exports.comparePassword = exports.hashPassword = exports.isDuplicateUserEmailService = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const isDuplicateUserEmailService = (userMOdel, email) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const filter = { email };
-        const emailInstance = yield userMOdel.findOne(filter);
-        if (emailInstance) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-    catch (err) {
-        throw err;
-    }
-});
+const config_1 = __importDefault(require("../../config/config"));
+const SALT_ROUNDS = 10;
+const isDuplicateUserEmailService = (userModel, email) => __awaiter(void 0, void 0, void 0, function* () { return Boolean(yield userModel.findOne({ email })); });
 exports.isDuplicateUserEmailService = isDuplicateUserEmailService;
-const hashPassword = (password) => __awaiter(void 0, void 0, void 0, function* () {
-    const salt = yield bcryptjs_1.default.genSalt(10);
-    const encryptPassword = yield bcryptjs_1.default.hash(password, salt);
-    return encryptPassword;
-});
+const hashPassword = (password) => __awaiter(void 0, void 0, void 0, function* () { return bcryptjs_1.default.hash(password, SALT_ROUNDS); });
 exports.hashPassword = hashPassword;
-const comparePassword = (inputPassword, dbPassword) => __awaiter(void 0, void 0, void 0, function* () {
-    const compare = yield bcryptjs_1.default.compare(inputPassword, dbPassword);
-    if (compare)
-        return true;
-    else
-        return false;
-});
+const comparePassword = (inputPassword, dbPassword) => __awaiter(void 0, void 0, void 0, function* () { return bcryptjs_1.default.compare(inputPassword, dbPassword); });
 exports.comparePassword = comparePassword;
 const generateJWT = (jwtPayload) => __awaiter(void 0, void 0, void 0, function* () {
-    const jwtToken = jsonwebtoken_1.default.sign(Object.assign({}, jwtPayload), process.env.JWT_KEY, {
-        expiresIn: "1y"
+    return jsonwebtoken_1.default.sign(Object.assign({}, jwtPayload), config_1.default.auth.jwtSecret, {
+        expiresIn: config_1.default.auth.jwtExpiresIn
     });
-    return jwtToken;
 });
 exports.generateJWT = generateJWT;
-const convertCaseInsensitiveForQuery = (value) => {
-    try {
-        return { $regex: value, $options: "i" };
-    }
-    catch (error) {
-        throw error;
-    }
-};
+/** Builds a case-insensitive match for a Mongo query. */
+const convertCaseInsensitiveForQuery = (value) => ({
+    $regex: value,
+    $options: "i"
+});
 exports.convertCaseInsensitiveForQuery = convertCaseInsensitiveForQuery;
 exports.auth = {
     isDuplicateUserEmailService: exports.isDuplicateUserEmailService,

@@ -1,43 +1,33 @@
-/* eslint-disable quotes */
-import express, { Request, Response } from "express";
-import dotenv from "dotenv";
-import mongoose from "mongoose";
-import cors from "cors";
-import { json } from "body-parser";
-import http from "http";
-import connectDb from "./config/db.config";
-import cron from "node-cron";
+import { Server } from "http";
+import createApp from "./app";
+import config from "./config/config";
+import connectDb, { disconnectDb } from "./config/db.config";
+import { logger } from "./utils/logger";
 
-const mongo_url = process.env.NODE_ENV !== "PROD" ? process.env.LOCAL_MONGO_URL : process.env.PROD_MONGO_URL;
+/**
+ * Process entry point: connect to Mongo, start listening, and shut both down
+ * cleanly on signal.
+ */
+const bootstrap = async (): Promise<void> => {
+	await connectDb();
 
-// dotenv.config();
-const app = express();
+	const app = createApp();
+	const server: Server = app.listen(config.server.port, () => {
+		logger.info(`Server is running at http://localhost:${config.server.port}`);
+	});
 
-const port = process.env.PORT || 8989;
+	const shutdown = (signal: string): void => {
+		logger.info(`${signal} received, shutting down`);
 
-// const mongo_url = (process.env.NODE_ENV !== "PROD") ? process.env.LOCAL_MONGO_URL : process.env.PROD_MONGO_URL
+		server.close(() => {
+			void disconnectDb().finally(() => process.exit(0));
+		});
+	};
 
-const options: cors.CorsOptions = {
-	allowedHeaders: ["sessionId", "Content-Type"],
-	exposedHeaders: ["sessionId"],
-	origin: "*",
-	methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-	preflightContinue: false
+	["SIGINT", "SIGTERM"].forEach((signal) => process.on(signal, () => shutdown(signal)));
 };
 
-app.use(cors(options));
-app.use(json());
-
-app.use(express.json());
-
-app.get("/", (req, res) => {
-	res.send(`<h1>air bnb server running succesfully</h1>`);
-});
-
-app.use("/api/v1", require("./api/v1/routers/routes.index"));
-
-connectDb();
-
-app.listen(port, () => {
-	console.log(`Server is running at http://localhost:${port}`);
+bootstrap().catch((error) => {
+	logger.error("Failed to start server", error);
+	process.exit(1);
 });

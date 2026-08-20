@@ -1,35 +1,18 @@
 import { Request, Response } from "express";
 import ContactFormModel from "../../../models/contactForm.model";
 import { MESSAGE } from "../../../constants/message";
+import { asyncHandler } from "../../../utils/asyncHandler";
+import { sendResult } from "../../../utils/apiResponse";
 
-export const submitContactForm = async (req: Request, res: Response) => {
-	try {
-		const { name, email, phone, comment, tag } = req.body;
-		const contact = new ContactFormModel({ name, email, phone, comment, tag });
-		await contact.save();
-		return res.status(200).json({
-			message: MESSAGE.post.succ,
-			result: contact
-		});
-	} catch (error) {
-		console.error("Error submitting contact form:", error);
-		return res.status(400).json({
-			message: MESSAGE.post.fail
-		});
-	}
-};
+export const submitContactForm = asyncHandler(async (req: Request, res: Response) => {
+	const { name, email, phone, comment, tag } = req.body;
+	const contact = await ContactFormModel.create({ name, email, phone, comment, tag });
 
-export const getContactForms = async (req: Request, res: Response) => {
-	try {
-		const contacts = await ContactFormModel.find().sort({ createdAt: -1 });
-		return res.status(200).json({
-			message: MESSAGE.get.succ,
-			result: contacts
-		});
-	} catch (error) {
-		console.error("Error fetching contact forms:", error);
-		return res.status(400).json({
-			message: MESSAGE.get.fail
-		});
-	}
-};
+	return sendResult(res, MESSAGE.post.succ, contact);
+}, MESSAGE.post.fail);
+
+export const getContactForms = asyncHandler(async (_req: Request, res: Response) => {
+	const contacts = await ContactFormModel.find().sort({ createdAt: -1 });
+
+	return sendResult(res, MESSAGE.get.succ, contacts);
+}, MESSAGE.get.fail);

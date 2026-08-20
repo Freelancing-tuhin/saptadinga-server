@@ -1,34 +1,33 @@
 import express from "express";
 import {
+	createWebsite,
+	deleteWebsite,
 	getAllWebsites,
 	getWebsiteById,
-	createWebsite,
-	updateWebsite,
-	deleteWebsite
+	updateWebsite
 } from "../controllers/cms/website.controller";
 import {
-	getPagesByWebsite,
-	getPageById,
 	createPage,
-	updatePage,
-	deletePage
+	deletePage,
+	getPageById,
+	getPagesByWebsite,
+	updatePage
 } from "../controllers/cms/page.controller";
 
 const router = express.Router();
 
-// Website routes
+// Websites
 router.get("/websites", getAllWebsites);
 router.get("/websites/:id", getWebsiteById);
 router.post("/websites", createWebsite);
 router.put("/websites/:id", updateWebsite);
 router.delete("/websites/:id", deleteWebsite);
 
-// Page routes
+// Pages
 router.get("/websites/:websiteId/pages", getPagesByWebsite);
 router.get("/pages/:id", getPageById);
 router.post("/pages", createPage);
-
 router.put("/pages/:id", updatePage);
 router.delete("/pages/:id", deletePage);
 
-module.exports = router;
+export default router;

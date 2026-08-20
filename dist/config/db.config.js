@@ -12,22 +12,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/* eslint-disable quotes */
+exports.disconnectDb = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
-const config_1 = require("./config");
-console.log("NODE_ENV", String(config_1.NODE_ENV));
-const mongoURI = "mongodb+srv://tuhinthakur1233:DY2p354LuqgXPef0@cluster0.r5uuwtr.mongodb.net/Saptadinga";
+const config_1 = __importDefault(require("./config"));
+const logger_1 = require("../utils/logger");
 const connectDb = () => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        if (mongoURI) {
-            const conn = yield mongoose_1.default.connect(mongoURI, {
-                serverSelectionTimeoutMS: 40000
-            });
-            console.log(`\x1b[34m \x1b[1m \x1b[4mMongoDB Connected\x1b[0m`);
-        }
-    }
-    catch (err) {
-        throw err;
-    }
+    mongoose_1.default.set("strictQuery", true);
+    yield mongoose_1.default.connect(config_1.default.db.uri, {
+        serverSelectionTimeoutMS: config_1.default.db.serverSelectionTimeoutMS
+    });
+    logger_1.logger.info(`MongoDB connected (${config_1.default.env})`);
 });
+const disconnectDb = () => __awaiter(void 0, void 0, void 0, function* () {
+    yield mongoose_1.default.connection.close();
+    logger_1.logger.info("MongoDB connection closed");
+});
+exports.disconnectDb = disconnectDb;
 exports.default = connectDb;

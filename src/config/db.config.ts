@@ -1,21 +1,20 @@
-/* eslint-disable quotes */
 import mongoose from "mongoose";
-import { NODE_ENV } from "./config";
+import config from "./config";
+import { logger } from "../utils/logger";
 
-console.log("NODE_ENV", String(NODE_ENV));
+const connectDb = async (): Promise<void> => {
+	mongoose.set("strictQuery", true);
 
-const mongoURI = "mongodb+srv://tuhinthakur1233:DY2p354LuqgXPef0@cluster0.r5uuwtr.mongodb.net/Saptadinga";
+	await mongoose.connect(config.db.uri, {
+		serverSelectionTimeoutMS: config.db.serverSelectionTimeoutMS
+	});
 
-const connectDb = async () => {
-	try {
-		if (mongoURI) {
-			const conn = await mongoose.connect(mongoURI, {
-				serverSelectionTimeoutMS: 40000
-			});
-			console.log(`\x1b[34m \x1b[1m \x1b[4mMongoDB Connected\x1b[0m`);
-		}
-	} catch (err) {
-		throw err;
-	}
+	logger.info(`MongoDB connected (${config.env})`);
 };
+
+export const disconnectDb = async (): Promise<void> => {
+	await mongoose.connection.close();
+	logger.info("MongoDB connection closed");
+};
+
 export default connectDb;

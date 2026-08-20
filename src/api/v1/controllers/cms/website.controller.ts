@@ -1,87 +1,44 @@
 import { Request, Response } from "express";
 import WebsiteModel from "../../../../models/website.model";
 import { MESSAGE } from "../../../../constants/message";
+import { asyncHandler } from "../../../../utils/asyncHandler";
+import { respond, sendResult } from "../../../../utils/apiResponse";
 
-export const getAllWebsites = async (req: Request, res: Response) => {
-	try {
-		const websites = await WebsiteModel.find().sort({ createdAt: -1 });
-		return res.status(200).json({
-			message: MESSAGE.get.succ,
-			result: websites
-		});
-	} catch (error) {
-		console.error("Error fetching websites:", error);
-		return res.status(400).json({
-			message: MESSAGE.get.fail
-		});
-	}
-};
+/** Fields a client is allowed to set on a website. */
+const pickWebsiteFields = (body: Record<string, unknown>) => ({
+	name: body.name,
+	slug: body.slug,
+	description: body.description,
+	logo: body.logo,
+	url: body.url
+});
 
-export const getWebsiteById = async (req: Request, res: Response) => {
-	try {
-		const { id } = req.params;
-		const website = await WebsiteModel.findById(id);
-		return res.status(200).json({
-			message: MESSAGE.get.succ,
-			result: website
-		});
-	} catch (error) {
-		console.error("Error fetching website:", error);
-		return res.status(400).json({
-			message: MESSAGE.get.fail
-		});
-	}
-};
+export const getAllWebsites = asyncHandler(async (_req: Request, res: Response) => {
+	const websites = await WebsiteModel.find().sort({ createdAt: -1 });
 
-export const createWebsite = async (req: Request, res: Response) => {
-	try {
-		const { name, slug, description, logo, url } = req.body;
-		const website = new WebsiteModel({ name, slug, description, logo, url });
-		await website.save();
-		return res.status(200).json({
-			message: MESSAGE.post.succ,
-			result: website
-		});
-	} catch (error) {
-		console.error("Error creating website:", error);
-		return res.status(400).json({
-			message: MESSAGE.post.fail
-		});
-	}
-};
+	return sendResult(res, MESSAGE.get.succ, websites);
+}, MESSAGE.get.fail);
 
-export const updateWebsite = async (req: Request, res: Response) => {
-	try {
-		const { id } = req.params;
-		const { name, slug, description, logo, url } = req.body;
-		const website = await WebsiteModel.findByIdAndUpdate(
-			id,
-			{ name, slug, description, logo, url },
-			{ new: true }
-		);
-		return res.status(200).json({
-			message: MESSAGE.put.succ,
-			result: website
-		});
-	} catch (error) {
-		console.error("Error updating website:", error);
-		return res.status(400).json({
-			message: MESSAGE.put.fail
-		});
-	}
-};
+export const getWebsiteById = asyncHandler(async (req: Request, res: Response) => {
+	const website = await WebsiteModel.findById(req.params.id);
 
-export const deleteWebsite = async (req: Request, res: Response) => {
-	try {
-		const { id } = req.params;
-		await WebsiteModel.findByIdAndDelete(id);
-		return res.status(200).json({
-			message: MESSAGE.delete.succ
-		});
-	} catch (error) {
-		console.error("Error deleting website:", error);
-		return res.status(400).json({
-			message: MESSAGE.delete.fail
-		});
-	}
-};
+	return sendResult(res, MESSAGE.get.succ, website);
+}, MESSAGE.get.fail);
+
+export const createWebsite = asyncHandler(async (req: Request, res: Response) => {
+	const website = await WebsiteModel.create(pickWebsiteFields(req.body));
+
+	return sendResult(res, MESSAGE.post.succ, website);
+}, MESSAGE.post.fail);
+
+export const updateWebsite = asyncHandler(async (req: Request, res: Response) => {
+	const website = await WebsiteModel.findByIdAndUpdate(req.params.id, pickWebsiteFields(req.body), { new: true });
+
+	return sendResult(res, MESSAGE.put.succ, website);
+}, MESSAGE.put.fail);
+
+export const deleteWebsite = asyncHandler(async (req: Request, res: Response) => {
+	await WebsiteModel.findByIdAndDelete(req.params.id);
+
+	return respond(res, 200, MESSAGE.delete.succ);
+}, MESSAGE.delete.fail);

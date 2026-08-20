@@ -15,4 +15,5 @@ router.route("/getAll-resort-bookings").get(resortBooking_controller_1.getResort
 router.route("/resort-bookings-stats").get(hetalnpnBookingstats_1.getResortBookingStats);
 router.route("/resort-bookings-dates").get(resortBooking_controller_1.getResortBookingAvailability);
 router.route("/confirm-booking/:id").patch(resortBooking_controller_1.updateResortBooking);
-module.exports = router;
+router.route("/delete-booking/:id").delete(resortBooking_controller_1.deleteResortBooking);
+exports.default = router;

@@ -13,68 +13,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getCruiseBookingStats = void 0;
-const message_1 = require("../../../../../constants/message");
 const cruiseBookings_model_1 = __importDefault(require("../../../../../models/cruiseBookings.model"));
-const getCruiseBookingStats = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d;
-    try {
-        const today = new Date();
-        const startOfToday = new Date(today.setHours(0, 0, 0, 0));
-        const endOfToday = new Date(today.setHours(23, 59, 59, 999));
-        const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-        const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-        const stats = yield cruiseBookings_model_1.default.aggregate([
-            {
-                $facet: {
-                    totalBookings: [{ $count: "count" }],
-                    todayBookings: [
-                        {
-                            $match: {
-                                $expr: {
-                                    $and: [
-                                        { $gte: [{ $toDate: "$checkInDate" }, startOfToday] },
-                                        { $lte: [{ $toDate: "$checkInDate" }, endOfToday] }
-                                    ]
-                                }
-                            }
-                        },
-                        { $count: "count" }
-                    ],
-                    monthBookings: [
-                        {
-                            $match: {
-                                $expr: {
-                                    $and: [
-                                        { $gte: [{ $toDate: "$checkInDate" }, startOfMonth] },
-                                        { $lte: [{ $toDate: "$checkInDate" }, endOfMonth] }
-                                    ]
-                                }
-                            }
-                        },
-                        { $count: "count" }
-                    ],
-                    totalRevenue: [
-                        { $group: { _id: null, total: { $sum: "$totalPrice" } } }
-                    ]
-                }
-            }
-        ]);
-        const result = {
-            totalBookings: ((_a = stats[0].totalBookings[0]) === null || _a === void 0 ? void 0 : _a.count) || 0,
-            todayBookings: ((_b = stats[0].todayBookings[0]) === null || _b === void 0 ? void 0 : _b.count) || 0,
-            monthBookings: ((_c = stats[0].monthBookings[0]) === null || _c === void 0 ? void 0 : _c.count) || 0,
-            totalRevenue: ((_d = stats[0].totalRevenue[0]) === null || _d === void 0 ? void 0 : _d.total) || 0,
-        };
-        return res.status(200).json({
-            message: message_1.MESSAGE.get.succ,
-            result
-        });
-    }
-    catch (error) {
-        console.error("Error retrieving booking statistics:", error);
-        return res.status(400).json({
-            message: message_1.MESSAGE.get.fail,
-        });
-    }
-});
-exports.getCruiseBookingStats = getCruiseBookingStats;
+const message_1 = require("../../../../../constants/message");
+const booking_service_1 = require("../../../../../services/booking/booking.service");
+const asyncHandler_1 = require("../../../../../utils/asyncHandler");
+const apiResponse_1 = require("../../../../../utils/apiResponse");
+/** Today / this-month / all-time counters for Machranga cruise bookings. */
+exports.getCruiseBookingStats = (0, asyncHandler_1.asyncHandler)((_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield (0, booking_service_1.getBookingCounters)(cruiseBookings_model_1.default);
+    return (0, apiResponse_1.sendResult)(res, message_1.MESSAGE.get.succ, result);
+}), message_1.MESSAGE.get.fail);
