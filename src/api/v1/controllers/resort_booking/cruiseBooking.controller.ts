@@ -1,4 +1,4 @@
-import { sendGuestAcknowledgement } from "../../../../services/mail/sendEnquiry";
+import { sendGuestAcknowledgement, sendEnquiry } from "../../../../services/mail/sendEnquiry";
 import config from "../../../../config/config";
 import CruiseBookingModel from "../../../../models/cruiseBookings.model";
 import { createBookingControllers } from "./booking.controller.factory";
@@ -8,7 +8,21 @@ const controllers = createBookingControllers({
 	bookingModel: CruiseBookingModel,
 	capacity: config.inventory.machrangaRooms,
 	confirmedOnly: true,
-	onEnquiry: (booking, id) => sendGuestAcknowledgement("machranga", "booking request", id, booking.user_mail)
+	onEnquiry: async (booking, id) => {
+		await Promise.all([
+			sendGuestAcknowledgement("machranga", "booking request", id, booking.user_mail),
+			sendEnquiry("New Machranga Cruise booking enquiry", id, {
+				Name: booking.user_name,
+				Phone: booking.user_phone,
+				Email: booking.user_mail,
+				"Check-in": booking.checkInDate,
+				"Check-out": booking.checkOutDate,
+				Rooms: booking.roomCount,
+				Guests: booking.guestCount,
+				Comment: booking.comment
+			})
+		]);
+	}
 });
 
 export const bookCruise = controllers.create;
