@@ -1,7 +1,7 @@
 const properties = {
 	hetalbon: {
 		name: "Hetalbon Eco Resort",
-		senderName: "Hetalbon",
+		senderName: "Hetalbon Eco Resort",
 		url: "https://hetalbon.com",
 		photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Sundarban_Tiger.jpg/960px-Sundarban_Tiger.jpg",
 		alt: "Bengal tiger beside a canal in the Sundarbans. Photo by Soumyajit Nandy, CC BY-SA 4.0.",
