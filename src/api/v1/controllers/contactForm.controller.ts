@@ -4,9 +4,17 @@ import { MESSAGE } from "../../../constants/message";
 import { asyncHandler } from "../../../utils/asyncHandler";
 import { sendResult } from "../../../utils/apiResponse";
 
+import { sendEnquiry, sendGuestAcknowledgement } from "../../../services/mail/sendEnquiry";
+
 export const submitContactForm = asyncHandler(async (req: Request, res: Response) => {
 	const { name, email, phone, comment, tag } = req.body;
 	const contact = await ContactFormModel.create({ name, email, phone, comment, tag });
+
+	const property = req.body.property;
+	if (property === "hetalbon" || property === "machranga") {
+		void sendGuestAcknowledgement(property, "enquiry", contact.id, contact.email);
+	}
+	void sendEnquiry("New contact enquiry", contact.id, { name, email, phone, comment });
 
 	return sendResult(res, MESSAGE.post.succ, contact);
 }, MESSAGE.post.fail);

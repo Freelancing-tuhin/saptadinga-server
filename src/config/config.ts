@@ -1,10 +1,11 @@
-/**
- * Single source of truth for runtime configuration.
- *
- * There are no `.env` files in this project — every value lives here. Each one
- * still honours a matching process-level variable first, so a host (pm2, Docker,
- * a PaaS dashboard) can override it at deploy time without editing this file.
- */
+import { existsSync, readFileSync } from "fs";
+import { resolve } from "path";
+
+// Local Brevo credentials are optional. Deployment environment variables take precedence.
+const brevoFile = resolve(__dirname, "../../.env.brevo.json");
+const localBrevo: { apiKey?: string; senderEmail?: string } = existsSync(brevoFile)
+	? JSON.parse(readFileSync(brevoFile, "utf8"))
+	: {};
 
 export type Environment = "PROD" | "DEV" | "LOCAL";
 
@@ -34,6 +35,11 @@ export const config = {
 			process.env.JWT_KEY ||
 			"9903af2e3fedd2589d868569734c71c2015a74799891f6c29895c7d6f55104e619e87404f0f688e652afcad322c8e94763234b6137bc672458511c0945a6e023",
 		jwtExpiresIn: "1y"
+	},
+
+	brevo: {
+		apiKey: process.env.BREVO_API_KEY || localBrevo.apiKey || "",
+		senderEmail: process.env.BREVO_SENDER_EMAIL || localBrevo.senderEmail || ""
 	},
 
 	mail: {

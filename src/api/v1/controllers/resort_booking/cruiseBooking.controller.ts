@@ -1,3 +1,4 @@
+import { sendGuestAcknowledgement } from "../../../../services/mail/sendEnquiry";
 import config from "../../../../config/config";
 import CruiseBookingModel from "../../../../models/cruiseBookings.model";
 import { createBookingControllers } from "./booking.controller.factory";
@@ -6,7 +7,8 @@ import { createBookingControllers } from "./booking.controller.factory";
 const controllers = createBookingControllers({
 	bookingModel: CruiseBookingModel,
 	capacity: config.inventory.machrangaRooms,
-	confirmedOnly: true
+	confirmedOnly: true,
+	onEnquiry: (booking, id) => sendGuestAcknowledgement("machranga", "booking request", id, booking.user_mail)
 });
 
 export const bookCruise = controllers.create;

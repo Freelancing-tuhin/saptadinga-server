@@ -22,6 +22,7 @@ export interface BookingControllerOptions {
 	 * properties have always differed here, so it stays explicit per property.
 	 */
 	confirmedOnly: boolean;
+	onEnquiry?: (booking: IBookingsSchema, id: string) => Promise<void>;
 }
 
 export interface BookingControllers {
@@ -36,7 +37,8 @@ export interface BookingControllers {
 export const createBookingControllers = ({
 	bookingModel,
 	capacity,
-	confirmedOnly
+	confirmedOnly,
+	onEnquiry
 }: BookingControllerOptions): BookingControllers => {
 	const countable = (bookings: IBookingsSchema[]): IBookingsSchema[] =>
 		confirmedOnly ? bookings.filter(isConfirmed) : bookings;
@@ -44,6 +46,7 @@ export const createBookingControllers = ({
 	return {
 		create: asyncHandler(async (req: Request, res: Response) => {
 			const booking = await bookingModel.create(req.body);
+			if (req.body.notifyEnquiry === true) void onEnquiry?.(booking, booking.id);
 
 			return sendResult(res, MESSAGE.post.succ, booking);
 		}, MESSAGE.post.fail),
