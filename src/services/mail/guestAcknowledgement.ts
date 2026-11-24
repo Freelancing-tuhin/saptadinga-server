@@ -9,19 +9,25 @@ const properties = {
 		followUp: "Our resort team will be in touch soon to help plan your stay.",
 		action: "Explore the resort",
 		ink: "#153e2c",
-		paper: "#eaf2e7"
+		paper: "#eaf2e7",
+		background: "#f5f5ef",
+		button: "#ffad59",
+		buttonText: "#242719"
 	},
 	machranga: {
 		name: "Machranga Cruise",
-		senderName: "Machranga",
+		senderName: "Machranga Cruise",
 		url: "https://machrangacruise.com",
-		photo: "https://machrangacruise.com/email-cruise.jpg",
-		alt: "Machranga Cruise in the Sundarbans",
+		photo: "https://www.yoyotripsindia.com/images/package/eoHG24yCWc/banner3.jpg",
+		alt: "",
 		heading: "The Sundarbans by river",
 		followUp: "Our cruise team will be in touch soon to help plan your time on the water.",
 		action: "Explore the cruise",
-		ink: "#103e43",
-		paper: "#e6f2ef"
+		ink: "#173b72",
+		paper: "#eaf3ff",
+		background: "#f3f7ff",
+		button: "#1d4ed8",
+		buttonText: "#ffffff"
 	}
 };
 
@@ -29,7 +35,7 @@ export type Property = keyof typeof properties;
 export type RequestKind = "booking request" | "enquiry";
 
 export function guestAcknowledgement(property: Property, kind: RequestKind) {
-	const { name, senderName, url, photo, alt, heading, followUp, action, ink, paper } = properties[property];
+	const { name, senderName, url, photo, alt, heading, followUp, action, ink, paper, background, button, buttonText } = properties[property];
 	const subject = `We received your ${kind} | ${name}`;
 	const receipt = `Thank you for choosing ${name}. We’ve received your ${kind}.`;
 	const textContent = `${receipt} ${followUp}\n\nWarm regards,\n${senderName}\n\n${action}: ${url}`;
@@ -39,7 +45,7 @@ export function guestAcknowledgement(property: Property, kind: RequestKind) {
 		: image;
 	const htmlContent = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${subject}</title></head>
-<body style="margin:0;background:#f5f5ef;color:${ink};font-family:Arial,Helvetica,sans-serif">
+<body style="margin:0;background:${background};color:${ink};font-family:Arial,Helvetica,sans-serif">
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr><td align="center">
 <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="width:100%;max-width:600px">
 <tr><td align="center" bgcolor="${ink}" style="padding:32px 20px;color:#ffffff">
@@ -50,7 +56,7 @@ export function guestAcknowledgement(property: Property, kind: RequestKind) {
 <tr><td align="center" bgcolor="${paper}" style="padding:36px 24px">
 <h2 style="margin:0 0 16px;font:normal 30px/1.2 Georgia,serif">Thank you for getting in touch</h2>
 <p style="margin:0 auto 24px;max-width:420px;font-size:16px;line-height:1.6">${receipt} ${followUp}</p>
-<a href="${url}" style="display:inline-block;background:#ffad59;color:#242719;padding:12px 22px;border-radius:4px;font-size:15px;font-weight:bold;text-decoration:none">${action}</a>
+<a href="${url}" style="display:inline-block;background:${button};color:${buttonText};padding:12px 22px;border-radius:4px;font-size:15px;font-weight:bold;text-decoration:none">${action}</a>
 </td></tr>
 <tr><td align="center" bgcolor="#ffffff" style="padding:24px;font:16px/1.5 Georgia,serif">Warm regards,<br>${senderName}</td></tr>
 </table></td></tr></table></body></html>`;

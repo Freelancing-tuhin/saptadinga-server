@@ -17,9 +17,15 @@ const contactForm_model_1 = __importDefault(require("../../../models/contactForm
 const message_1 = require("../../../constants/message");
 const asyncHandler_1 = require("../../../utils/asyncHandler");
 const apiResponse_1 = require("../../../utils/apiResponse");
+const sendEnquiry_1 = require("../../../services/mail/sendEnquiry");
 exports.submitContactForm = (0, asyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, email, phone, comment, tag } = req.body;
     const contact = yield contactForm_model_1.default.create({ name, email, phone, comment, tag });
+    const property = req.body.property;
+    if (property === "hetalbon" || property === "machranga") {
+        void (0, sendEnquiry_1.sendGuestAcknowledgement)(property, "enquiry", contact.id, contact.email);
+    }
+    void (0, sendEnquiry_1.sendEnquiry)("New contact enquiry", contact.id, { name, email, phone, comment });
     return (0, apiResponse_1.sendResult)(res, message_1.MESSAGE.post.succ, contact);
 }), message_1.MESSAGE.post.fail);
 exports.getContactForms = (0, asyncHandler_1.asyncHandler)((_req, res) => __awaiter(void 0, void 0, void 0, function* () {

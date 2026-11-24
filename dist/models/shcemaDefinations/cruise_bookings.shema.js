@@ -9,6 +9,7 @@ const schemaOption_1 = require("../../constants/model/schemaOption");
 const cruiseBookingsSchema = new mongoose_1.Schema({
     user_name: model_constant_1.default.optionalNullString,
     user_phone: model_constant_1.default.optionalNullString,
+    user_mail: model_constant_1.default.optionalNullString,
     checkInDate: model_constant_1.default.optionalNullObject,
     checkOutDate: model_constant_1.default.optionalNullObject,
     totalPrice: model_constant_1.default.optionalNullNumber,

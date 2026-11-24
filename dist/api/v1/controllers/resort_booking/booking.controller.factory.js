@@ -15,11 +15,13 @@ const asyncHandler_1 = require("../../../../utils/asyncHandler");
 const apiResponse_1 = require("../../../../utils/apiResponse");
 const appError_1 = require("../../../../utils/appError");
 const booking_service_1 = require("../../../../services/booking/booking.service");
-const createBookingControllers = ({ bookingModel, capacity, confirmedOnly }) => {
+const createBookingControllers = ({ bookingModel, capacity, confirmedOnly, onEnquiry }) => {
     const countable = (bookings) => confirmedOnly ? bookings.filter(booking_service_1.isConfirmed) : bookings;
     return {
         create: (0, asyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
             const booking = yield bookingModel.create(req.body);
+            if (req.body.notifyEnquiry === true)
+                void (onEnquiry === null || onEnquiry === void 0 ? void 0 : onEnquiry(booking, booking.id));
             return (0, apiResponse_1.sendResult)(res, message_1.MESSAGE.post.succ, booking);
         }), message_1.MESSAGE.post.fail),
         getDashboardStats: (0, asyncHandler_1.asyncHandler)((_req, res) => __awaiter(void 0, void 0, void 0, function* () {

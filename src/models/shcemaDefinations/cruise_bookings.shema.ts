@@ -7,6 +7,7 @@ const cruiseBookingsSchema: Schema<IBookingsSchema> = new Schema<IBookingsSchema
 	{
 		user_name: SCHEMA_DEFINITION_PROPERTY.optionalNullString,
 		user_phone: SCHEMA_DEFINITION_PROPERTY.optionalNullString,
+		user_mail: SCHEMA_DEFINITION_PROPERTY.optionalNullString,
 		checkInDate: SCHEMA_DEFINITION_PROPERTY.optionalNullObject,
 		checkOutDate: SCHEMA_DEFINITION_PROPERTY.optionalNullObject,
 		totalPrice: SCHEMA_DEFINITION_PROPERTY.optionalNullNumber,
