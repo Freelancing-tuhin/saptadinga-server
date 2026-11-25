@@ -4,6 +4,7 @@ import config from "../../config/config";
 
 interface MailMessage {
 	senderName?: string;
+	senderEmail?: string;
 	to: { email: string }[];
 	cc?: { email: string }[];
 	subject: string;
@@ -11,8 +12,9 @@ interface MailMessage {
 	htmlContent?: string;
 }
 
-async function sendMail(recordId: string, { senderName, ...message }: MailMessage): Promise<void> {
-	const { apiKey: key, senderEmail: sender } = config.brevo;
+async function sendMail(recordId: string, { senderName, senderEmail, ...message }: MailMessage): Promise<void> {
+	const key = config.brevo.apiKey;
+	const sender = senderEmail || config.brevo.senderEmail;
 	if (!key || !sender) {
 		console.error("Brevo configuration missing for enquiry", recordId);
 		return;
@@ -28,8 +30,14 @@ async function sendMail(recordId: string, { senderName, ...message }: MailMessag
 	}
 }
 
-export function sendEnquiry(subject: string, recordId: string, fields: Record<string, unknown>): Promise<void> {
+export function sendEnquiry(
+	subject: string,
+	recordId: string,
+	fields: Record<string, unknown>,
+	property?: Property
+): Promise<void> {
 	return sendMail(recordId, {
+		senderEmail: property ? config.brevo.senderEmails[property] : undefined,
 		to: [{ email: "enquiry@hetalbon.com" }],
 		cc: [{ email: "prosenjit.kpa@gmail.com" }],
 		subject,
@@ -42,6 +50,7 @@ export async function sendGuestAcknowledgement(property: Property, kind: Request
 	if (!email) return;
 
 	await sendMail(recordId, {
+		senderEmail: config.brevo.senderEmails[property],
 		to: [{ email }],
 		...guestAcknowledgement(property, kind)
 	});

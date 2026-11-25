@@ -11,10 +11,11 @@ export const submitContactForm = asyncHandler(async (req: Request, res: Response
 	const contact = await ContactFormModel.create({ name, email, phone, comment, tag });
 
 	const property = req.body.property;
-	if (property === "hetalbon" || property === "machranga") {
-		void sendGuestAcknowledgement(property, "enquiry", contact.id, contact.email);
+	const validProperty = property === "hetalbon" || property === "machranga" ? property : undefined;
+	if (validProperty) {
+		void sendGuestAcknowledgement(validProperty, "enquiry", contact.id, contact.email);
 	}
-	void sendEnquiry("New contact enquiry", contact.id, { name, email, phone, comment });
+	void sendEnquiry("New contact enquiry", contact.id, { name, email, phone, comment }, validProperty);
 
 	return sendResult(res, MESSAGE.post.succ, contact);
 }, MESSAGE.post.fail);

@@ -3,9 +3,12 @@ import { resolve } from "path";
 
 // Local Brevo credentials are optional. Deployment environment variables take precedence.
 const brevoFile = resolve(__dirname, "../../.env.brevo.json");
-const localBrevo: { apiKey?: string; senderEmail?: string } = existsSync(brevoFile)
-	? JSON.parse(readFileSync(brevoFile, "utf8"))
-	: {};
+const localBrevo: {
+	apiKey?: string;
+	senderEmail?: string;
+	hetalbonSenderEmail?: string;
+	machrangaSenderEmail?: string;
+} = existsSync(brevoFile) ? JSON.parse(readFileSync(brevoFile, "utf8")) : {};
 
 export type Environment = "PROD" | "DEV" | "LOCAL";
 
@@ -39,7 +42,21 @@ export const config = {
 
 	brevo: {
 		apiKey: process.env.BREVO_API_KEY || localBrevo.apiKey || "",
-		senderEmail: process.env.BREVO_SENDER_EMAIL || localBrevo.senderEmail || ""
+		senderEmail: process.env.BREVO_SENDER_EMAIL || localBrevo.senderEmail || "",
+		senderEmails: {
+			hetalbon:
+				process.env.BREVO_SENDER_EMAIL_HETALBON ||
+				localBrevo.hetalbonSenderEmail ||
+				process.env.BREVO_SENDER_EMAIL ||
+				localBrevo.senderEmail ||
+				"",
+			machranga:
+				process.env.BREVO_SENDER_EMAIL_MACHRANGA ||
+				localBrevo.machrangaSenderEmail ||
+				process.env.BREVO_SENDER_EMAIL ||
+				localBrevo.senderEmail ||
+				""
+		}
 	},
 
 	mail: {
