@@ -1,6 +1,6 @@
 # Builds on every push and PR to main; deploys via pm2 only on a push to main.
-# No .env file or repository secrets are required — all runtime configuration
-# lives in src/config/config.ts.
+# Brevo credentials (BREVO_API_KEY, BREVO_SENDER_EMAIL) are passed from
+# repository secrets; remaining defaults live in src/config/config.ts.
 # https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
 name: Node.js CI/CD
@@ -51,6 +51,8 @@ jobs:
         if: github.event_name == 'push'
         env:
           NODE_ENV: PROD
+          BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
+          BREVO_SENDER_EMAIL: ${{ secrets.BREVO_SENDER_EMAIL }}
         run: |
           if npx pm2 describe "$PM2_APP_NAME" > /dev/null 2>&1; then
             npx pm2 restart "$PM2_APP_NAME" --update-env
