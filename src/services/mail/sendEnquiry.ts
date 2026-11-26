@@ -1,3 +1,4 @@
+import { enquiryEmail } from "./enquiryEmail";
 import { guestAcknowledgement, Property, RequestKind } from "./guestAcknowledgement";
 import axios from "axios";
 import config from "../../config/config";
@@ -34,13 +35,16 @@ export function sendEnquiry(
 	subject: string,
 	recordId: string,
 	fields: Record<string, unknown>,
+	kind: "Booking" | "Contact",
 	property?: Property
 ): Promise<void> {
 	return sendMail(recordId, {
 		senderEmail: property ? config.brevo.senderEmails[property] : undefined,
+		senderName: property ? `${property === "hetalbon" ? "Hetalbon" : "Machranga"} ${kind} enquiry` : undefined,
 		to: [{ email: "enquiry@hetalbon.com" }],
-		cc: [{ email: "prosenjit.kpa@gmail.com" }],
+		cc: [{ email: "prosenjit.kpa@gmail.com" }, { email: "tuhin81018@gmail.com" }],
 		subject,
+		htmlContent: property ? enquiryEmail(property, kind, fields) : undefined,
 		textContent: Object.entries(fields).map(([label, value]) => `${label}: ${value ?? ""}`).join("\n")
 	});
 }

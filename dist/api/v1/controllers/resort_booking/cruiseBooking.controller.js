@@ -34,7 +34,7 @@ const controllers = (0, booking_controller_factory_1.createBookingControllers)({
                 Rooms: booking.roomCount,
                 Guests: booking.guestCount,
                 Comment: booking.comment
-            })
+            }, "Booking", "machranga")
         ]);
     })
 });

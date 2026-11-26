@@ -24,14 +24,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendGuestAcknowledgement = exports.sendEnquiry = void 0;
+const enquiryEmail_1 = require("./enquiryEmail");
 const guestAcknowledgement_1 = require("./guestAcknowledgement");
 const axios_1 = __importDefault(require("axios"));
 const config_1 = __importDefault(require("../../config/config"));
 function sendMail(recordId, _a) {
     var _b, _c;
-    var { senderName } = _a, message = __rest(_a, ["senderName"]);
+    var { senderName, senderEmail } = _a, message = __rest(_a, ["senderName", "senderEmail"]);
     return __awaiter(this, void 0, void 0, function* () {
-        const { apiKey: key, senderEmail: sender } = config_1.default.brevo;
+        const key = config_1.default.brevo.apiKey;
+        const sender = senderEmail || config_1.default.brevo.senderEmail;
         if (!key || !sender) {
             console.error("Brevo configuration missing for enquiry", recordId);
             return;
@@ -44,11 +46,14 @@ function sendMail(recordId, _a) {
         }
     });
 }
-function sendEnquiry(subject, recordId, fields) {
+function sendEnquiry(subject, recordId, fields, kind, property) {
     return sendMail(recordId, {
+        senderEmail: property ? config_1.default.brevo.senderEmails[property] : undefined,
+        senderName: property ? `${property === "hetalbon" ? "Hetalbon" : "Machranga"} ${kind} enquiry` : undefined,
         to: [{ email: "enquiry@hetalbon.com" }],
-        cc: [{ email: "prosenjit.kpa@gmail.com" }],
+        cc: [{ email: "prosenjit.kpa@gmail.com" }, { email: "tuhin81018@gmail.com" }],
         subject,
+        htmlContent: property ? (0, enquiryEmail_1.enquiryEmail)(property, kind, fields) : undefined,
         textContent: Object.entries(fields).map(([label, value]) => `${label}: ${value !== null && value !== void 0 ? value : ""}`).join("\n")
     });
 }
@@ -58,7 +63,7 @@ function sendGuestAcknowledgement(property, kind, recordId, guestEmail) {
         const email = guestEmail === null || guestEmail === void 0 ? void 0 : guestEmail.trim();
         if (!email)
             return;
-        yield sendMail(recordId, Object.assign({ to: [{ email }] }, (0, guestAcknowledgement_1.guestAcknowledgement)(property, kind)));
+        yield sendMail(recordId, Object.assign({ senderEmail: config_1.default.brevo.senderEmails[property], to: [{ email }] }, (0, guestAcknowledgement_1.guestAcknowledgement)(property, kind)));
     });
 }
 exports.sendGuestAcknowledgement = sendGuestAcknowledgement;

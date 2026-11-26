@@ -1,4 +1,4 @@
-const properties = {
+export const properties = {
 	hetalbon: {
 		name: "Hetalbon Eco Resort",
 		senderName: "Hetalbon Eco Resort",

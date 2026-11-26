@@ -21,7 +21,7 @@ const controllers = createBookingControllers({
 				Guests: booking.guestCount,
 				Activities: booking.activities,
 				Comment: booking.comment
-			}, "hetalbon")
+			}, "Booking", "hetalbon")
 		]);
 	}
 });

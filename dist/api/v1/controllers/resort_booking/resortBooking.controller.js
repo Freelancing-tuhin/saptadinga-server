@@ -35,7 +35,7 @@ const controllers = (0, booking_controller_factory_1.createBookingControllers)({
                 Guests: booking.guestCount,
                 Activities: booking.activities,
                 Comment: booking.comment
-            })
+            }, "Booking", "hetalbon")
         ]);
     })
 });

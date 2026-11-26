@@ -22,10 +22,11 @@ exports.submitContactForm = (0, asyncHandler_1.asyncHandler)((req, res) => __awa
     const { name, email, phone, comment, tag } = req.body;
     const contact = yield contactForm_model_1.default.create({ name, email, phone, comment, tag });
     const property = req.body.property;
-    if (property === "hetalbon" || property === "machranga") {
-        void (0, sendEnquiry_1.sendGuestAcknowledgement)(property, "enquiry", contact.id, contact.email);
+    const validProperty = property === "hetalbon" || property === "machranga" ? property : undefined;
+    if (validProperty) {
+        void (0, sendEnquiry_1.sendGuestAcknowledgement)(validProperty, "enquiry", contact.id, contact.email);
     }
-    void (0, sendEnquiry_1.sendEnquiry)("New contact enquiry", contact.id, { name, email, phone, comment });
+    void (0, sendEnquiry_1.sendEnquiry)("New contact enquiry", contact.id, { name, email, phone, comment }, "Contact", validProperty);
     return (0, apiResponse_1.sendResult)(res, message_1.MESSAGE.post.succ, contact);
 }), message_1.MESSAGE.post.fail);
 exports.getContactForms = (0, asyncHandler_1.asyncHandler)((_req, res) => __awaiter(void 0, void 0, void 0, function* () {

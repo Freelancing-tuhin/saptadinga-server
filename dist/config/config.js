@@ -5,9 +5,7 @@ const fs_1 = require("fs");
 const path_1 = require("path");
 // Local Brevo credentials are optional. Deployment environment variables take precedence.
 const brevoFile = (0, path_1.resolve)(__dirname, "../../.env.brevo.json");
-const localBrevo = (0, fs_1.existsSync)(brevoFile)
-    ? JSON.parse((0, fs_1.readFileSync)(brevoFile, "utf8"))
-    : {};
+const localBrevo = (0, fs_1.existsSync)(brevoFile) ? JSON.parse((0, fs_1.readFileSync)(brevoFile, "utf8")) : {};
 exports.NODE_ENV = process.env.NODE_ENV || "LOCAL";
 exports.isProd = exports.NODE_ENV === "PROD";
 exports.config = {
@@ -30,7 +28,19 @@ exports.config = {
     },
     brevo: {
         apiKey: process.env.BREVO_API_KEY || localBrevo.apiKey || "",
-        senderEmail: process.env.BREVO_SENDER_EMAIL || localBrevo.senderEmail || ""
+        senderEmail: process.env.BREVO_SENDER_EMAIL || localBrevo.senderEmail || "",
+        senderEmails: {
+            hetalbon: process.env.BREVO_SENDER_EMAIL_HETALBON ||
+                localBrevo.hetalbonSenderEmail ||
+                process.env.BREVO_SENDER_EMAIL ||
+                localBrevo.senderEmail ||
+                "",
+            machranga: process.env.BREVO_SENDER_EMAIL_MACHRANGA ||
+                localBrevo.machrangaSenderEmail ||
+                process.env.BREVO_SENDER_EMAIL ||
+                localBrevo.senderEmail ||
+                ""
+        }
     },
     mail: {
         service: "gmail",

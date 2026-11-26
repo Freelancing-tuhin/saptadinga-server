@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.guestAcknowledgement = void 0;
-const properties = {
+exports.guestAcknowledgement = exports.properties = void 0;
+exports.properties = {
     hetalbon: {
         name: "Hetalbon Eco Resort",
         senderName: "Hetalbon Eco Resort",
@@ -34,7 +34,7 @@ const properties = {
     }
 };
 function guestAcknowledgement(property, kind) {
-    const { name, senderName, url, photo, alt, heading, followUp, action, ink, paper, background, button, buttonText } = properties[property];
+    const { name, senderName, url, photo, alt, heading, followUp, action, ink, paper, background, button, buttonText } = exports.properties[property];
     const subject = `We received your ${kind} | ${name}`;
     const receipt = `Thank you for choosing ${name}. We’ve received your ${kind}.`;
     const textContent = `${receipt} ${followUp}\n\nWarm regards,\n${senderName}\n\n${action}: ${url}`;

@@ -20,7 +20,7 @@ const controllers = createBookingControllers({
 				Rooms: booking.roomCount,
 				Guests: booking.guestCount,
 				Comment: booking.comment
-			}, "machranga")
+			}, "Booking", "machranga")
 		]);
 	}
 });
