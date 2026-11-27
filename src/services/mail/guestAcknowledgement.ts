@@ -48,7 +48,7 @@ export function guestAcknowledgement(property: Property, kind: RequestKind) {
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr><td align="center">
 <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="width:100%;max-width:600px">
 <tr><td align="center" bgcolor="${ink}" style="padding:32px 20px;color:#ffffff">
-<p style="margin:0 0 14px;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase"><img src="${favicon}" width="20" height="20" alt="" style="display:inline-block;vertical-align:middle;border:0;margin-right:8px;border-radius:3px"><span style="vertical-align:middle">${name}</span></p>
+<p style="margin:0 0 14px;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase"><img src="${favicon}" width="36" height="36" alt="" style="display:inline-block;vertical-align:middle;border:0;margin-right:10px;border-radius:4px"><span style="vertical-align:middle">${name}</span></p>
 <h1 style="margin:0;font:normal 40px/1.12 Georgia,serif">${heading}</h1>
 </td></tr>
 <tr><td bgcolor="${paper}">${heroImage}</td></tr>
