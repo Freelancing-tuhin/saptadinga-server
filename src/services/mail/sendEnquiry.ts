@@ -1,4 +1,3 @@
-import { enquiryEmail } from "./enquiryEmail";
 import { guestAcknowledgement, Property, RequestKind } from "./guestAcknowledgement";
 import axios from "axios";
 import config from "../../config/config";
@@ -44,7 +43,6 @@ export function sendEnquiry(
 		to: [{ email: "enquiry@hetalbon.com" }],
 		cc: [{ email: "prosenjit.kpa@gmail.com" }, { email: "tuhin81018@gmail.com" }],
 		subject,
-		htmlContent: property ? enquiryEmail(property, kind, fields) : undefined,
 		textContent: Object.entries(fields).map(([label, value]) => `${label}: ${value ?? ""}`).join("\n")
 	});
 }

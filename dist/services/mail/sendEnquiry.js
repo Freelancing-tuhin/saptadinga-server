@@ -24,7 +24,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendGuestAcknowledgement = exports.sendEnquiry = void 0;
-const enquiryEmail_1 = require("./enquiryEmail");
 const guestAcknowledgement_1 = require("./guestAcknowledgement");
 const axios_1 = __importDefault(require("axios"));
 const config_1 = __importDefault(require("../../config/config"));
@@ -53,7 +52,6 @@ function sendEnquiry(subject, recordId, fields, kind, property) {
         to: [{ email: "enquiry@hetalbon.com" }],
         cc: [{ email: "prosenjit.kpa@gmail.com" }, { email: "tuhin81018@gmail.com" }],
         subject,
-        htmlContent: property ? (0, enquiryEmail_1.enquiryEmail)(property, kind, fields) : undefined,
         textContent: Object.entries(fields).map(([label, value]) => `${label}: ${value !== null && value !== void 0 ? value : ""}`).join("\n")
     });
 }
