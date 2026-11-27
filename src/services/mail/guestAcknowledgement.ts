@@ -3,8 +3,9 @@ export const properties = {
 		name: "Hetalbon Eco Resort",
 		senderName: "Hetalbon Eco Resort",
 		url: "https://hetalbon.com",
-		photo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Sundarban_Tiger.jpg/960px-Sundarban_Tiger.jpg",
-		alt: "Bengal tiger beside a canal in the Sundarbans. Photo by Soumyajit Nandy, CC BY-SA 4.0.",
+		favicon: "https://hetalbon.com/assets/logo-Fj8GhOgP.png",
+		photo: "https://r1imghtlak.mmtcdn.com/6ece26de4e6011ea827d0242ac110002.png?&output-quality=75&downsize=520:350&crop=520:350;22,0&output-format=jpg&downsize=480:336&crop=480:336",
+		alt: "Hetalbon Eco Resort",
 		heading: "A stay in the Sundarbans",
 		followUp: "Our resort team will be in touch soon to help plan your stay.",
 		action: "Explore the resort",
@@ -18,8 +19,9 @@ export const properties = {
 		name: "Machranga Cruise",
 		senderName: "Machranga Cruise",
 		url: "https://machrangacruise.com",
-		photo: "https://www.yoyotripsindia.com/images/package/eoHG24yCWc/banner3.jpg",
-		alt: "",
+		favicon: "https://machrangacruise.com/assets/machrangapic-pWF2uX2h.png",
+		photo: "https://machrangacruise.com/assets/slide4-BOPo3u1g.jpg",
+		alt: "Machranga Cruise",
 		heading: "The Sundarbans by river",
 		followUp: "Our cruise team will be in touch soon to help plan your time on the water.",
 		action: "Explore the cruise",
@@ -35,21 +37,18 @@ export type Property = keyof typeof properties;
 export type RequestKind = "booking request" | "enquiry";
 
 export function guestAcknowledgement(property: Property, kind: RequestKind) {
-	const { name, senderName, url, photo, alt, heading, followUp, action, ink, paper, background, button, buttonText } = properties[property];
+	const { name, senderName, url, favicon, photo, alt, heading, followUp, action, ink, paper, background, button, buttonText } = properties[property];
 	const subject = `We received your ${kind} | ${name}`;
 	const receipt = `Thank you for choosing ${name}. We’ve received your ${kind}.`;
 	const textContent = `${receipt} ${followUp}\n\nWarm regards,\n${senderName}\n\n${action}: ${url}`;
-	const image = `<img src="${photo}" width="600" alt="${alt}" style="display:block;border:0;width:100%;height:auto">`;
-	const heroImage = property === "hetalbon"
-		? `<a href="https://commons.wikimedia.org/wiki/File:Sundarban_Tiger.jpg">${image}</a>`
-		: image;
+	const heroImage = `<img src="${photo}" width="600" alt="${alt}" style="display:block;border:0;width:100%;height:auto">`;
 	const htmlContent = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${subject}</title></head>
 <body style="margin:0;background:${background};color:${ink};font-family:Arial,Helvetica,sans-serif">
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0"><tr><td align="center">
 <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="width:100%;max-width:600px">
 <tr><td align="center" bgcolor="${ink}" style="padding:32px 20px;color:#ffffff">
-<p style="margin:0 0 14px;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase">${name}</p>
+<p style="margin:0 0 14px;font-size:13px;font-weight:bold;letter-spacing:2px;text-transform:uppercase"><img src="${favicon}" width="20" height="20" alt="" style="display:inline-block;vertical-align:middle;border:0;margin-right:8px;border-radius:3px"><span style="vertical-align:middle">${name}</span></p>
 <h1 style="margin:0;font:normal 40px/1.12 Georgia,serif">${heading}</h1>
 </td></tr>
 <tr><td bgcolor="${paper}">${heroImage}</td></tr>
